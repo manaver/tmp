@@ -7,15 +7,14 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Set permissions for Apache user
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html \
-    && find /var/www/html -type d -exec chmod 777 {} \;
+RUN chown -R $USER:www-data /var/www/html;
 
 
 RUN docker-php-ext-install mysqli pdo_mysql
-
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN a2enmod rewrite
 
-EXPOSE 80
+EXPOSE 90
 
 CMD ["apache2-foreground"]
